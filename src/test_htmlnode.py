@@ -20,6 +20,10 @@ class TestHTMLNode(unittest.TestCase):
         )
         self.assertEqual(node.propsToHTML()[0], " ")
 
+    def test_emptyPropsDict(self):
+        node = HTMLNode(props={})
+        self.assertEqual(node.propsToHTML(), "")
+
     def test_toHTML(self):
         node = HTMLNode()
         self.assertRaises(NotImplementedError, node.toHTML)
