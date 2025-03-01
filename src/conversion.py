@@ -59,13 +59,13 @@ def splitNodesImage(oldNodes: list[TextNode]):
             )
 
             if split[1] == "":
-                continue
+                return newNodes
             nstring = split[1]
-
+        newNodes.append(TextNode(nstring, TextType.text))
     return newNodes
 
 
-def splitNodesLinks(oldNodes):
+def splitNodesLinks(oldNodes: list[TextNode]):
     newNodes = []
     for node in oldNodes:
         if node.textType != TextType.text:
@@ -88,7 +88,18 @@ def splitNodesLinks(oldNodes):
             )
 
             if split[1] == "":
-                continue
+                return newNodes
             nstring = split[1]
-
+        newNodes.append(TextNode(nstring, TextType.text))
     return newNodes
+
+
+def textToTextNode(text: str):
+    node = TextNode(text, TextType.text)
+    nodes = splitNodes([node], "**", TextType.bold)
+    nodes = splitNodes(nodes, "_", TextType.italic)
+    nodes = splitNodes(nodes, "`", TextType.code)
+    nodes = splitNodesImage(nodes)
+    nodes = splitNodesLinks(nodes)
+
+    return nodes

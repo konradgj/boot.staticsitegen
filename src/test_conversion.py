@@ -6,6 +6,7 @@ from conversion import (
     splitNodes,
     splitNodesImage,
     splitNodesLinks,
+    textToTextNode,
 )
 from textnode import TextNode, TextType
 
@@ -78,5 +79,26 @@ class TestConversion(unittest.TestCase):
                 TextNode(
                     "second image", TextType.link, "https://i.imgur.com/3elNhQu.png"
                 ),
+            ],
+        )
+
+    def test_textToNode(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        nodes = textToTextNode(text)
+        self.assertListEqual(
+            nodes,
+            [
+                TextNode("This is ", TextType.text),
+                TextNode("text", TextType.bold),
+                TextNode(" with an ", TextType.text),
+                TextNode("italic", TextType.italic),
+                TextNode(" word and a ", TextType.text),
+                TextNode("code block", TextType.code),
+                TextNode(" and an ", TextType.text),
+                TextNode(
+                    "obi wan image", TextType.image, "https://i.imgur.com/fJRm4Vk.jpeg"
+                ),
+                TextNode(" and a ", TextType.text),
+                TextNode("link", TextType.link, "https://boot.dev"),
             ],
         )
