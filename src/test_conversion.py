@@ -1,6 +1,12 @@
 import unittest
 
-from conversion import extractmdImages, extractmdLinks, splitNodes
+from conversion import (
+    extractmdImages,
+    extractmdLinks,
+    splitNodes,
+    splitNodesImage,
+    splitNodesLinks,
+)
 from textnode import TextNode, TextType
 
 
@@ -36,5 +42,41 @@ class TestConversion(unittest.TestCase):
             [
                 ("to boot dev", "https://www.boot.dev"),
                 ("to youtube", "https://www.youtube.com/@bootdotdev"),
+            ],
+        )
+
+    def test_splitNodeImage(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.text,
+        )
+        newNodes = splitNodesImage([node])
+        self.assertListEqual(
+            newNodes,
+            [
+                TextNode("This is text with an ", TextType.text),
+                TextNode("image", TextType.image, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.text),
+                TextNode(
+                    "second image", TextType.image, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+        )
+
+    def test_splitNodeLinks(self):
+        node = TextNode(
+            "This is text with an [image](https://i.imgur.com/zjjcJKZ.png) and another [second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.text,
+        )
+        newNodes = splitNodesLinks([node])
+        self.assertListEqual(
+            newNodes,
+            [
+                TextNode("This is text with an ", TextType.text),
+                TextNode("image", TextType.link, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.text),
+                TextNode(
+                    "second image", TextType.link, "https://i.imgur.com/3elNhQu.png"
+                ),
             ],
         )

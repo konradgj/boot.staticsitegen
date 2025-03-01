@@ -34,3 +34,61 @@ def extractmdImages(text: str):
 def extractmdLinks(text: str):
     matches = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
     return matches
+
+
+def splitNodesImage(oldNodes: list[TextNode]):
+    newNodes = []
+    for node in oldNodes:
+        if node.textType != TextType.text:
+            newNodes.append(node)
+            continue
+
+        nstring = node.text
+        images = extractmdImages(node.text)
+        for image in images:
+            ialt = image[0]
+            ilink = image[1]
+            istring = f"![{ialt}]({ilink})"
+            split = nstring.split(istring, maxsplit=1)
+
+            newNodes.extend(
+                [
+                    TextNode(split[0], TextType.text),
+                    TextNode(ialt, TextType.image, ilink),
+                ]
+            )
+
+            if split[1] == "":
+                continue
+            nstring = split[1]
+
+    return newNodes
+
+
+def splitNodesLinks(oldNodes):
+    newNodes = []
+    for node in oldNodes:
+        if node.textType != TextType.text:
+            newNodes.append(node)
+            continue
+
+        nstring = node.text
+        images = extractmdLinks(node.text)
+        for image in images:
+            ialt = image[0]
+            ilink = image[1]
+            istring = f"[{ialt}]({ilink})"
+            split = nstring.split(istring, maxsplit=1)
+
+            newNodes.extend(
+                [
+                    TextNode(split[0], TextType.text),
+                    TextNode(ialt, TextType.link, ilink),
+                ]
+            )
+
+            if split[1] == "":
+                continue
+            nstring = split[1]
+
+    return newNodes
