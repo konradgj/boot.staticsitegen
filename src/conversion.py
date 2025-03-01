@@ -1,3 +1,5 @@
+import re
+
 from textnode import TextNode, TextType
 
 
@@ -22,3 +24,13 @@ def splitNodes(oldNodes: list[TextNode], delimeter: str, textType: TextType):
         )
 
     return newNodes
+
+
+def extractmdImages(text: str):
+    matches = re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return matches
+
+
+def extractmdLinks(text: str):
+    matches = re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+    return matches
