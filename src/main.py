@@ -1,19 +1,11 @@
-from htmlnode import HTMLNode
+from conversion import splitNodes
 from textnode import TextNode, TextType
 
 
 def main():
-    tn = TextNode("dummy text", TextType.bold, "https://www.boot.dev")
-    print(tn)
-
-    test = HTMLNode(
-        props={
-            "href": "https://www.google.com",
-            "target": "_blank",
-        }
-    )
-
-    print(test)
+    node = TextNode("This is text with a `code block` word", TextType.text)
+    new_nodes = splitNodes([node], "`", TextType.code)
+    print(new_nodes)
 
 
 main()
