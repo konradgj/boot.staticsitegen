@@ -1,6 +1,16 @@
 import re
+from enum import Enum
 
 from textnode import TextNode, TextType
+
+
+class BlockType(Enum):
+    paragraph = "paragraph"
+    heading = "heading"
+    code = "code"
+    quote = "quote"
+    unordered_list = "ulist"
+    ordered_list = "olist"
 
 
 def splitNodes(oldNodes: list[TextNode], delimeter: str, textType: TextType):
@@ -114,3 +124,19 @@ def md_to_blocks(md):
         blocks.append(block.strip())
 
     return blocks
+
+
+def block_to_blocktype(block):
+    if re.match(r"\#{1,6}", block[:6]):
+        return BlockType.heading
+    if block[:3] == "```" and block[-3:] == "```":
+        return BlockType.code
+    split = block.split("\n")
+    if all(c[0] == ">" for c in split):
+        return BlockType.quote
+    if all(p[:2] == "- " for p in split):
+        return BlockType.unordered_list
+    if all(re.match(r"\d{1}\. ", p) for p in split):
+        return BlockType.ordered_list
+
+    return BlockType.paragraph

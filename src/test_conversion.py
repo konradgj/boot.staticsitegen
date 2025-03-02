@@ -1,6 +1,8 @@
 import unittest
 
 from conversion import (
+    BlockType,
+    block_to_blocktype,
     extractmdImages,
     extractmdLinks,
     md_to_blocks,
@@ -123,3 +125,17 @@ This is the same paragraph on a new line
                 "- This is a list\n- with items",
             ],
         )
+
+    def test_block_to_blocktype(self):
+        heading = "## HELLO"
+        code = "```\n this is coce \n```"
+        quote = ">this\n>is\n>quote"
+        ulist = "- 1\n- 2\n- 3"
+        olist = "1. one\n2. two\n3. three"
+        para = "blab balab bla"
+        self.assertEqual(block_to_blocktype(heading), BlockType.heading)
+        self.assertEqual(block_to_blocktype(code), BlockType.code)
+        self.assertEqual(block_to_blocktype(quote), BlockType.quote)
+        self.assertEqual(block_to_blocktype(ulist), BlockType.unordered_list)
+        self.assertEqual(block_to_blocktype(olist), BlockType.ordered_list)
+        self.assertEqual(block_to_blocktype(para), BlockType.paragraph)
