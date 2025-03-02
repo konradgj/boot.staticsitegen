@@ -3,6 +3,7 @@ import unittest
 from conversion import (
     extractmdImages,
     extractmdLinks,
+    md_to_blocks,
     splitNodes,
     splitNodesImage,
     splitNodesLinks,
@@ -100,5 +101,25 @@ class TestConversion(unittest.TestCase):
                 ),
                 TextNode(" and a ", TextType.text),
                 TextNode("link", TextType.link, "https://boot.dev"),
+            ],
+        )
+
+    def test_md_to_blocks(self):
+        text = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+"""
+        block = md_to_blocks(text)
+        self.assertListEqual(
+            block,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
             ],
         )

@@ -103,3 +103,14 @@ def textToTextNode(text: str):
     nodes = splitNodesLinks(nodes)
 
     return nodes
+
+
+def md_to_blocks(md):
+    split = md.split("\n\n")
+    blocks = []
+    for block in split:
+        if block == "":
+            continue
+        blocks.append(block.strip())
+
+    return blocks
