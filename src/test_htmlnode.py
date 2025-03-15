@@ -24,10 +24,6 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode(props={})
         self.assertEqual(node.propsToHTML(), "")
 
-    def test_toHTML(self):
-        node = HTMLNode()
-        # self.assertRaises(NotImplementedError, node.toHTML)
-
 
 if __name__ == "__main__":
     unittest.main()
