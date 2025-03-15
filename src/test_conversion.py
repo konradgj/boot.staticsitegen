@@ -6,6 +6,7 @@ from conversion import (
     extractmdImages,
     extractmdLinks,
     md_to_blocks,
+    md_to_HTMLNode,
     splitNodes,
     splitNodesImage,
     splitNodesLinks,
@@ -139,3 +140,59 @@ This is the same paragraph on a new line
         self.assertEqual(block_to_blocktype(ulist), BlockType.unordered_list)
         self.assertEqual(block_to_blocktype(olist), BlockType.ordered_list)
         self.assertEqual(block_to_blocktype(para), BlockType.paragraph)
+
+    def test_paragraphs(self):
+        md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+"""
+
+        node = md_to_HTMLNode(md)
+        html = node.toHTML()
+        self.assertEqual(
+            html,
+            "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+        )
+
+    def test_headerblock(self):
+        md = "### Title"
+        node = md_to_HTMLNode(md)
+        html = node.toHTML()
+        self.assertEqual(html, "<div><h3>Title</h3></div>")
+
+    def test_quoteblock(self):
+        md = """>TEEST\n>quote"""
+        node = md_to_HTMLNode(md)
+        html = node.toHTML()
+        self.assertEqual(html, "<div><blockquote>TEEST quote</blockquote></div>")
+
+    def test_ulistblock(self):
+        md = "- 1\n- 2\n- 3"
+        node = md_to_HTMLNode(md)
+        html = node.toHTML()
+        self.assertEqual(html, "<div><ul><li>1</li><li>2</li><li>3</li></ul></div>")
+
+    def test_olistblock(self):
+        md = "1. a\n2. b\n3. c"
+        node = md_to_HTMLNode(md)
+        html = node.toHTML()
+        self.assertEqual(html, "<div><ol><li>a</li><li>b</li><li>c</li></ol></div>")
+
+    def test_codeblock(self):
+        md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
+
+        node = md_to_HTMLNode(md)
+        html = node.toHTML()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff</code></pre></div>",
+        )

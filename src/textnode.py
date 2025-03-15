@@ -1,6 +1,6 @@
 from enum import Enum
 
-from htmlnode import HTMLNode
+from leafnode import LeafNode
 
 
 class TextType(Enum):
@@ -29,14 +29,14 @@ class TextNode:
     def toHTMLNode(self):
         match self.textType:
             case TextType.text:
-                return HTMLNode(None, self.text)
+                return LeafNode(None, self.text.replace("\n", " "))
             case TextType.bold:
-                return HTMLNode("b", self.text)
+                return LeafNode("b", self.text)
             case TextType.italic:
-                return HTMLNode("i", self.text)
+                return LeafNode("i", self.text)
             case TextType.code:
-                return HTMLNode("code", self.text)
+                return LeafNode("code", self.text)
             case TextType.link:
-                return HTMLNode("a", self.text, None, {"href": self.url})
+                return LeafNode("a", self.text, {"href": self.url})
             case TextType.image:
-                return HTMLNode("img", "", None, {"src": self.url, "alt": self.text})
+                return LeafNode("img", "", {"src": self.url, "alt": self.text})

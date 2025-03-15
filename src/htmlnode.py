@@ -14,7 +14,13 @@ class HTMLNode:
         return f"tag:{tag}\nvalue:{value}\nchildren:{children}\nprops:{props}"
 
     def toHTML(self):
-        raise NotImplementedError
+        mid = ""
+        if self.children:
+            for child in self.children:
+                mid += child.toHTML()
+        start = f"<{self.tag}{self.propsToHTML()}>"
+        end = f"</{self.tag}>"
+        return start + mid + end
 
     def propsToHTML(self):
         if self.props == None:

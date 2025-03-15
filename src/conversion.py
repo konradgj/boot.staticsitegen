@@ -1,6 +1,9 @@
 import re
 from enum import Enum
 
+from htmlnode import HTMLNode
+from leafnode import LeafNode
+from parentnode import ParentNode
 from textnode import TextNode, TextType
 
 
@@ -140,3 +143,54 @@ def block_to_blocktype(block):
         return BlockType.ordered_list
 
     return BlockType.paragraph
+
+
+def block_to_HTMLNode(block, btype: BlockType):
+    if btype == BlockType.paragraph:
+        tnodes = textToTextNode(block)
+        childnodes = map(lambda n: n.toHTMLNode(), tnodes)
+        return HTMLNode("p", None, childnodes)
+    if btype == BlockType.heading:
+        match = re.findall(r"\#{1,6} ", block)
+        hnum = len(match[0])
+        block = block[hnum:]
+        tnodes = textToTextNode(block)
+        childnodes = map(lambda n: n.toHTMLNode(), tnodes)
+        return HTMLNode(f"h{hnum-1}", None, childnodes)
+    if btype == BlockType.quote:
+        block = block.replace(">", "")
+        tnodes = textToTextNode(block)
+        childnodes = map(lambda n: n.toHTMLNode(), tnodes)
+        return HTMLNode("blockquote", None, childnodes)
+    if btype == BlockType.unordered_list:
+        blocks = block.replace("\n", "").split("- ")[1:]
+        childnodes = []
+        for b in blocks:
+            tnodes = textToTextNode(b)
+            leafnodes = map(lambda n: n.toHTMLNode(), tnodes)
+            childnodes.append(HTMLNode("li", None, leafnodes))
+        return HTMLNode("ul", None, childnodes)
+    if btype == BlockType.ordered_list:
+        blocks = block.replace("\n", "")
+        blocks = re.split(r"\d{1}\. ", blocks)[1:]
+        childnodes = []
+        for b in blocks:
+            tnodes = textToTextNode(b)
+            leafnodes = map(lambda n: n.toHTMLNode(), tnodes)
+            childnodes.append(HTMLNode("li", None, leafnodes))
+        return HTMLNode("ol", None, childnodes)
+    if btype == BlockType.code:
+        block = block.replace("```", "").strip("\n")
+        childnode = TextNode(block, TextType.code).toHTMLNode()
+        return HTMLNode("pre", None, [childnode])
+
+
+def md_to_HTMLNode(md):
+    blocks = md_to_blocks(md)
+    childnodes = []
+    for block in blocks:
+        btype = block_to_blocktype(block)
+        node = block_to_HTMLNode(block, btype)
+        childnodes.append(node)
+
+    return ParentNode("div", childnodes)
