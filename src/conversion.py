@@ -157,7 +157,7 @@ def block_to_HTMLNode(block, btype: BlockType):
         childnodes = map(lambda n: n.toHTMLNode(), tnodes)
         return HTMLNode(f"h{hnum-1}", None, childnodes)
     if btype == BlockType.quote:
-        block = block.replace(">", "")
+        block = block.replace("> ", "")
         tnodes = textToTextNode(block)
         childnodes = map(lambda n: n.toHTMLNode(), tnodes)
         return HTMLNode("blockquote", None, childnodes)
