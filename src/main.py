@@ -11,7 +11,7 @@ def main():
         shutil.rmtree(target)
     copyStatic(source, target)
 
-    generatePage('content/index.md', 'template.html', 'public/index.html')
+    generatePagesR('content', 'template.html', 'public/')
 
     return
 

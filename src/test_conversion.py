@@ -25,7 +25,7 @@ class TestConversion(unittest.TestCase):
         node = TextNode("test", TextType.text)
         node2 = TextNode("this is a **bold word**", TextType.text)
         newNodes = splitNodes([node, node2], "**", TextType.bold)
-        self.assertEqual(len(newNodes), 4)
+        self.assertEqual(len(newNodes), 3)
         self.assertEqual(newNodes[2].textType, TextType.bold)
 
     def test_extractImages(self):
@@ -144,7 +144,7 @@ This is the same paragraph on a new line
     def test_paragraphs(self):
         md = """
 This is **bolded** paragraph
-text in a p
+text **in** a p
 tag here
 
 This is another paragraph with _italic_ text and `code` here
@@ -155,7 +155,7 @@ This is another paragraph with _italic_ text and `code` here
         html = node.toHTML()
         self.assertEqual(
             html,
-            "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+            "<div><p>This is <b>bolded</b> paragraph text <b>in</b> a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
         )
 
     def test_headerblock(self):
@@ -165,7 +165,7 @@ This is another paragraph with _italic_ text and `code` here
         self.assertEqual(html, "<div><h3>Title</h3></div>")
 
     def test_quoteblock(self):
-        md = """>TEEST\n>quote"""
+        md = """> TEEST\n> quote"""
         node = md_to_HTMLNode(md)
         html = node.toHTML()
         self.assertEqual(html, "<div><blockquote>TEEST quote</blockquote></div>")

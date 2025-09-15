@@ -14,6 +14,16 @@ def generatePage(fromPath, templatePath, destPath):
     outfile = templateFile.replace('{{ Content }}', htmlNode.toHTML())
     writeFile(destPath, outfile)
 
+def generatePagesR(dirPath, templatePath, destDirPath):
+    lDir = os.listdir(dirPath)
+    for path in lDir:
+        p = os.path.join(dirPath, path)
+        if os.path.isfile(p):
+            generatePage(p, templatePath, os.path.join(destDirPath, path).replace(".md", '.html'))
+        else:
+            generatePagesR(p, templatePath, os.path.join(destDirPath, path))
+    
+
 def copyStatic(source, target):
     if not os.path.exists(target):
         os.mkdir(target)

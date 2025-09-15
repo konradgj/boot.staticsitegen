@@ -26,14 +26,14 @@ def splitNodes(oldNodes: list[TextNode], delimeter: str, textType: TextType):
         if len(split) == 1:
             newNodes.append(node)
             continue
-
-        newNodes.extend(
-            [
-                TextNode(split[0], TextType.text),
-                TextNode(split[1], textType),
-                TextNode(split[2], TextType.text),
-            ]
-        )
+        
+        for i, str in enumerate(split):
+            if str: 
+                if i % 2 == 0:
+                    newNodes.append(TextNode(str, TextType.text))
+                else:
+                    newNodes.append(TextNode(str, textType))
+    
 
     return newNodes
 
