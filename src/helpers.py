@@ -4,24 +4,27 @@ import shutil
 from conversion import *
 
 
-def generatePage(fromPath, templatePath, destPath):
+def generatePage(fromPath, templatePath, destPath, basePath):
     print(f'Generating page from {fromPath} to {destPath} using {templatePath}')
     fileMd = readFile(fromPath)
     templateFile = readFile(templatePath)
     htmlNode = md_to_HTMLNode(fileMd)
     title = extractTitle(fileMd)
     outfile = templateFile.replace('{{ Title }}', title)
-    outfile = templateFile.replace('{{ Content }}', htmlNode.toHTML())
+    outfile = outfile.replace('{{ Content }}', htmlNode.toHTML())
+    outfile = outfile.replace('href="/', f'href="{basePath}')
+    outfile = outfile.replace('src="/', f'src="{basePath}')
     writeFile(destPath, outfile)
 
-def generatePagesR(dirPath, templatePath, destDirPath):
+def generatePagesR(dirPath, templatePath, destDirPath, basePath):
     lDir = os.listdir(dirPath)
     for path in lDir:
         p = os.path.join(dirPath, path)
+        dPath = os.path.join(destDirPath, path)
         if os.path.isfile(p):
-            generatePage(p, templatePath, os.path.join(destDirPath, path).replace(".md", '.html'))
+            generatePage(p, templatePath, dPath.replace(".md", '.html'), basePath)
         else:
-            generatePagesR(p, templatePath, os.path.join(destDirPath, path))
+            generatePagesR(p, templatePath, dPath, basePath)
     
 
 def copyStatic(source, target):
